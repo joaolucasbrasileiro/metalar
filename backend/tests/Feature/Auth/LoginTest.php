@@ -47,19 +47,64 @@ class LoginTest extends TestCase
         ]);
 
         $response
-        ->assertStatus(200)
-        ->assertJsonPath('token_type', 'bearer')
-        ->assertJsonPath('user.id', $user->id)
-        ->assertJsonPath('user.name', $user->name)
-        ->assertJsonPath('user.email', $user->email);
+            ->assertStatus(200)
+            ->assertJsonPath('token_type', 'bearer')
+            ->assertJsonPath('user.id', $user->id)
+            ->assertJsonPath('user.name', $user->name)
+            ->assertJsonPath('user.email', $user->email);
 
-        $token = $response->json('access_token');
-        $expiresIn = $response->json('expires_in');
+            $token = $response->json('access_token');
+            $expiresIn = $response->json('expires_in');
 
-        $this->assertIsString($token);
-        $this->assertNotEmpty($token);
-        $this->assertIsInt($expiresIn);
-        $this->assertGreaterThan(0, $expiresIn);
+            $this->assertIsString($token);
+            $this->assertNotEmpty($token);
+            $this->assertIsInt($expiresIn);
+            $this->assertGreaterThan(0, $expiresIn);
+
+    }
+
+    public function test_acess_without_credentials(): void
+    {
+        $response = $this->getJson('/api/auth/me');
+
+        $response
+            -> assertStatus(401);
+    }
+
+    public function test_authenticated_user_can_acess_me(): void
+    {
+        $user = $this->testCreateUsers();
+
+        $LoginResponse = $this->postJson('/api/auth/login', [
+            'login' => 'testuser@test.com',
+            'password' => 'Password@123',
+        ]);
+
+        $token = $LoginResponse->json('access_token');
+
+        $response = $this
+                    ->withToken($token)
+                    ->getJson('/api/auth/me');
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonPath('data.id', $user->id)
+            ->assertJsonPath('data.name', $user->name)
+            ->assertJsonPath('data.email', $user->email);
+    }
+
+    public function test_acess_without_an_active_user(): void
+    {
+        $user = $this->testCreateUsers(['is_active'=>false]);
+
+        $response = $this->postJson('/api/auth/login', [
+            'login' => 'testuser@test.com',
+            'password' => 'Password@123',
+        ]);
+
+        $response
+            ->assertStatus(401)
+            ->assertJsonMissingPath('access_token');
 
     }
 
