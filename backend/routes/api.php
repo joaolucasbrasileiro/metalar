@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -27,4 +28,7 @@ Route::prefix('users')->group(function () {
     });
 });
 
-
+Route::prefix('shops')->group(function () {
+    Route::get('', [ShopController::class, 'index']);
+    Route::get('/{shop}', [ShopController::class, 'show']);
+});

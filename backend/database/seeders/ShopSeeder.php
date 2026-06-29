@@ -14,7 +14,7 @@ class ShopSeeder extends Seeder
     {
         $headquarter = Shop::updateOrCreate(
             [
-                'code' => 'matriz'
+                'code' => 'matriz',
             ],
             [
                 'name' => 'Metalar Matriz',
@@ -32,7 +32,7 @@ class ShopSeeder extends Seeder
 
         $branch = Shop::updateOrCreate(
             [
-                'code' => 'filial01'
+                'code' => 'filial01',
             ],
             [
                 'name' => 'Metalar Filial01',
