@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -32,3 +34,14 @@ Route::prefix('shops')->group(function () {
     Route::get('', [ShopController::class, 'index']);
     Route::get('/{shop}', [ShopController::class, 'show']);
 });
+
+Route::apiResource('brands', BrandController::class)->only(['index', 'show']);
+Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth:api', 'admin'])
+    ->group(function () {
+        Route::apiResource('brands', BrandController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+    });
