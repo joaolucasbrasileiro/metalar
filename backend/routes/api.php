@@ -2,10 +2,20 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+/*
+ * index -> Listar vários | GET
+ * store -> Cadastrar | POST
+ * show -> Consultar um | GET
+ * update -> Atualizar um | PUT/PATCH
+ * destroy -> Delete | DELETE
+ */
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -37,6 +47,8 @@ Route::prefix('shops')->group(function () {
 
 Route::apiResource('brands', BrandController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+Route::apiResource('subcategories', SubcategoryController::class)->only(['index', 'show']);
 
 Route::prefix('admin')
     ->name('admin.')
@@ -44,4 +56,6 @@ Route::prefix('admin')
     ->group(function () {
         Route::apiResource('brands', BrandController::class)->only(['store', 'update', 'destroy']);
         Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('subcategories', SubcategoryController::class)->only(['store', 'update', 'destroy']);
     });

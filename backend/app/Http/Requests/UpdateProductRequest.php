@@ -31,6 +31,8 @@ class UpdateProductRequest extends FormRequest
     {
         return [
             'brand_id' => ['sometimes', 'nullable', 'integer', 'exists:brands,id'],
+            'subcategory_ids' => ['sometimes', 'nullable', 'array'],
+            'subcategory_ids.*' => ['integer', 'distinct', 'exists:subcategories,id'],
             'name' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
             'description' => ['sometimes', 'nullable', 'string', 'max:10000'],
         ];

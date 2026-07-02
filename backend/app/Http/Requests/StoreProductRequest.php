@@ -31,6 +31,8 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'brand_id' => ['nullable', 'integer', 'exists:brands,id'],
+            'subcategory_ids' => ['nullable', 'array'],
+            'subcategory_ids.*' => ['integer', 'distinct', 'exists:subcategories,id'],
             'name' => ['required', 'string', 'min:2', 'max:255'],
             'description' => ['nullable', 'string', 'max:10000'],
         ];
