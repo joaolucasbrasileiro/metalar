@@ -1,0 +1,3812 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Metalar API",
+        "description": "Documentacao tecnica da API Metalar para autenticacao, catalogo, lojas, estoque, precos e promocoes.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Servidor atual"
+        }
+    ],
+    "paths": {
+        "/api/admin/brands": {
+            "post": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Cria marca",
+                "operationId": "adminBrandsStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "logo"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Votorantim"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Marca criada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Nao autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/brands/{brand}": {
+            "delete": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Remove marca",
+                "operationId": "adminBrandsDestroy",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "votorantim"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Marca removida."
+                    },
+                    "409": {
+                        "description": "Marca possui produtos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Atualiza marca",
+                "operationId": "adminBrandsUpdate",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "votorantim"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Votorantim"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "logo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Marca atualizada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/products": {
+            "post": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Cria produto",
+                "operationId": "adminProductsStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produto criado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/products/{product}": {
+            "delete": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Remove produto",
+                "operationId": "adminProductsDestroy",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii-50kg"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Produto removido."
+                    },
+                    "409": {
+                        "description": "Produto possui SKUs.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Atualiza produto",
+                "operationId": "adminProductsUpdate",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii-50kg"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produto atualizado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/categories": {
+            "post": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Cria categoria",
+                "operationId": "adminCategoriesStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoryInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoria criada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/categories/{category}": {
+            "delete": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Remove categoria",
+                "operationId": "adminCategoriesDestroy",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimentos"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Categoria removida."
+                    },
+                    "409": {
+                        "description": "Categoria possui subcategorias.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Atualiza categoria",
+                "operationId": "adminCategoriesUpdate",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimentos"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoryInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoria atualizada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/subcategories": {
+            "post": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Cria subcategoria",
+                "operationId": "adminSubcategoriesStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubcategoryInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Subcategoria criada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubcategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/subcategories/{subcategory}": {
+            "delete": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Remove subcategoria",
+                "operationId": "adminSubcategoriesDestroy",
+                "parameters": [
+                    {
+                        "name": "subcategory",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Subcategoria removida."
+                    },
+                    "409": {
+                        "description": "Subcategoria possui filhas ou produtos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Atualiza subcategoria",
+                "operationId": "adminSubcategoriesUpdate",
+                "parameters": [
+                    {
+                        "name": "subcategory",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SubcategoryInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Subcategoria atualizada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubcategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/product-skus": {
+            "post": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Cria SKU",
+                "operationId": "adminProductSkusStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductSkuInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "SKU criado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSkuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/product-skus/{productSku}": {
+            "delete": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Remove SKU",
+                "operationId": "adminProductSkusDestroy",
+                "parameters": [
+                    {
+                        "name": "productSku",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "CIMENTO-50"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "SKU removido."
+                    },
+                    "409": {
+                        "description": "SKU possui estoque ou precos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Atualiza SKU",
+                "operationId": "adminProductSkusUpdate",
+                "parameters": [
+                    {
+                        "name": "productSku",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "CIMENTO-50"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductSkuInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "SKU atualizado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSkuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/product-images": {
+            "post": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Envia imagem de produto",
+                "operationId": "adminProductImagesStore",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "product_id",
+                                    "image"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "alt_text": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "position": {
+                                        "type": "integer",
+                                        "example": 0
+                                    },
+                                    "is_primary": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Imagem criada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductImage"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/product-images/{productImage}": {
+            "delete": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Remove imagem de produto",
+                "operationId": "adminProductImagesDestroy",
+                "parameters": [
+                    {
+                        "name": "productImage",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Imagem removida."
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/shops/{shop}/users/{user}": {
+            "post": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Vincula usuario a loja",
+                "operationId": "adminShopUsersStore",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    },
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Usuario vinculado."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin Catalog"
+                ],
+                "summary": "Remove vinculo do usuario com loja",
+                "operationId": "adminShopUsersDestroy",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    },
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Vinculo removido."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registra usuario",
+                "operationId": "authRegister",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Conta criada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Realiza login",
+                "description": "Autentica um usuario ativo usando email ou CPF e retorna um token JWT.",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login realizado com sucesso.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais invalidas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Consulta usuario autenticado",
+                "operationId": "authMe",
+                "responses": {
+                    "200": {
+                        "description": "Usuario autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Nao autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Renova token JWT",
+                "operationId": "authRefresh",
+                "responses": {
+                    "200": {
+                        "description": "Token renovado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Nao autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Encerra sessao JWT",
+                "operationId": "authLogout",
+                "responses": {
+                    "200": {
+                        "description": "Logout realizado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Nao autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/shops": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Lista lojas",
+                "operationId": "shopsIndex",
+                "responses": {
+                    "200": {
+                        "description": "Lojas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopsResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/shops/{shop}": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Consulta loja",
+                "operationId": "shopsShow",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "description": "Codigo da loja.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loja.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/brands": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Lista marcas",
+                "operationId": "brandsIndex",
+                "responses": {
+                    "200": {
+                        "description": "Marcas paginadas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandsPaginatedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/brands/{brand}": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Consulta marca",
+                "operationId": "brandsShow",
+                "parameters": [
+                    {
+                        "name": "brand",
+                        "in": "path",
+                        "description": "Slug da marca.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "votorantim"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Marca.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Lista produtos",
+                "operationId": "productsIndex",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimentos"
+                    },
+                    {
+                        "name": "subcategory",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii"
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "votorantim"
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento"
+                    },
+                    {
+                        "name": "in_stock",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "example": true
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "best_offer",
+                                "name"
+                            ]
+                        },
+                        "example": "best_offer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produtos paginados.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductsPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Filtros invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{product}": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Consulta produto",
+                "operationId": "productsShow",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Slug do produto.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii-50kg"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Lista categorias",
+                "operationId": "categoriesIndex",
+                "responses": {
+                    "200": {
+                        "description": "Categorias paginadas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoriesPaginatedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/categories/{category}": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Consulta categoria",
+                "operationId": "categoriesShow",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "Slug da categoria.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimentos"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoria.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subcategories": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Lista subcategorias raiz",
+                "operationId": "subcategoriesIndex",
+                "responses": {
+                    "200": {
+                        "description": "Subcategorias paginadas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubcategoriesPaginatedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/subcategories/{subcategory}": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Consulta subcategoria",
+                "operationId": "subcategoriesShow",
+                "parameters": [
+                    {
+                        "name": "subcategory",
+                        "in": "path",
+                        "description": "Slug da subcategoria.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subcategoria.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SubcategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product-skus": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Lista SKUs",
+                "operationId": "productSkusIndex",
+                "responses": {
+                    "200": {
+                        "description": "SKUs paginados.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSkusPaginatedResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product-skus/{productSku}": {
+            "get": {
+                "tags": [
+                    "Public Catalog"
+                ],
+                "summary": "Consulta SKU",
+                "operationId": "productSkusShow",
+                "parameters": [
+                    {
+                        "name": "productSku",
+                        "in": "path",
+                        "description": "Codigo SKU.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "CIMENTO-50"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SKU.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSkuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/staff/shops/{shop}/stocks": {
+            "get": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Lista estoque da loja",
+                "operationId": "staffStocksIndex",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Estoques paginados.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StocksPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/shops/{shop}/stock-movements": {
+            "get": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Lista movimentacoes de estoque",
+                "operationId": "staffStockMovementsIndex",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movimentacoes paginadas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StockMovementsPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/shops/{shop}/product-skus/{productSku}/stock-adjustments": {
+            "post": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Ajusta estoque de SKU na loja",
+                "operationId": "staffStockAdjustmentsStore",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    },
+                    {
+                        "name": "productSku",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "CIMENTO-50"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StockAdjustmentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Estoque ajustado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StockResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/shops/{shop}/prices": {
+            "get": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Lista precos da loja",
+                "operationId": "staffPricesIndex",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Precos paginados.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopSkuPricesPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/shops/{shop}/product-skus/{productSku}/price": {
+            "put": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Cria ou atualiza preco de SKU na loja",
+                "operationId": "staffPricesUpdate",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    },
+                    {
+                        "name": "productSku",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "CIMENTO-50"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ShopSkuPriceInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Preco atualizado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopSkuPriceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Preco criado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopSkuPriceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Remove preco de SKU na loja",
+                "operationId": "staffPricesDestroy",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    },
+                    {
+                        "name": "productSku",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "CIMENTO-50"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Preco removido."
+                    },
+                    "409": {
+                        "description": "Preco possui promocao ativa.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConflictError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/shops/{shop}/promotions": {
+            "get": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Lista promocoes da loja",
+                "operationId": "staffPromotionsIndex",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Promocoes paginadas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopSkuPromotionsPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/shops/{shop}/product-skus/{productSku}/promotions": {
+            "post": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Cria promocao para SKU na loja",
+                "operationId": "staffPromotionsStore",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    },
+                    {
+                        "name": "productSku",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "CIMENTO-50"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ShopSkuPromotionInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Promocao criada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopSkuPromotionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/staff/shops/{shop}/promotions/{promotion}": {
+            "delete": {
+                "tags": [
+                    "Staff Commerce"
+                ],
+                "summary": "Cancela promocao",
+                "operationId": "staffPromotionsDestroy",
+                "parameters": [
+                    {
+                        "name": "shop",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "matriz"
+                    },
+                    {
+                        "name": "promotion",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Promocao cancelada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShopSkuPromotionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Lista usuarios",
+                "operationId": "usersIndex",
+                "responses": {
+                    "200": {
+                        "description": "Lista paginada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsersPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Consulta usuario",
+                "operationId": "usersShow",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuario.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Remove usuario",
+                "operationId": "usersDestroy",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Usuario removido."
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualiza perfil",
+                "operationId": "usersUpdate",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Usuario atualizado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}/cpf": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualiza CPF",
+                "operationId": "usersUpdateCpf",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCpfRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "CPF atualizado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}/password": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualiza senha",
+                "operationId": "usersUpdatePassword",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdatePasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Senha atualizada.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}/role": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualiza papel do usuario",
+                "operationId": "usersUpdateRole",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateRoleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Papel atualizado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbiddenError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados invalidos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LoginRequest": {
+                "required": [
+                    "login",
+                    "password"
+                ],
+                "properties": {
+                    "login": {
+                        "description": "Email ou CPF do usuario.",
+                        "type": "string",
+                        "example": "usuario@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "Senha@123"
+                    }
+                },
+                "type": "object"
+            },
+            "AuthUser": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Usuario Exemplo"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "usuario@email.com"
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "common"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginResponse": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "example": "bearer"
+                    },
+                    "expires_in": {
+                        "type": "integer",
+                        "example": 3600
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/AuthUser"
+                    }
+                },
+                "type": "object"
+            },
+            "UnauthorizedError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Credenciais invalidas."
+                    }
+                },
+                "type": "object"
+            },
+            "BrandInput": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Votorantim"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Fabricante de materiais de construcao.",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Brand": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Votorantim"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "votorantim"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "logo_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "products_count": {
+                        "type": "integer",
+                        "example": 12,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "BrandResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Brand"
+                    }
+                },
+                "type": "object"
+            },
+            "BrandsPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Brand"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryInput": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Cimentos"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Category": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Cimentos"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "cimentos"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "subcategories_count": {
+                        "type": "integer",
+                        "example": 4,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CategoryResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Category"
+                    }
+                },
+                "type": "object"
+            },
+            "CategoriesPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Category"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "SubcategoryInput": {
+                "required": [
+                    "category_id",
+                    "name"
+                ],
+                "properties": {
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "parent_id": {
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Cimento CP II"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Subcategory": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Cimento CP II"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "cimento-cp-ii"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "level": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "children_count": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "products_count": {
+                        "type": "integer",
+                        "example": 8,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "SubcategoryResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Subcategory"
+                    }
+                },
+                "type": "object"
+            },
+            "SubcategoriesPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Subcategory"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductInput": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "brand_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "subcategory_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "example": [
+                            1,
+                            2
+                        ],
+                        "nullable": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Cimento CP II 50kg"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProductImage": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost/storage/products/cimento.png"
+                    },
+                    "alt_text": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "position": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "is_primary": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "Offer": {
+                "properties": {
+                    "shop": {
+                        "type": "object"
+                    },
+                    "regular_price": {
+                        "type": "string",
+                        "example": "50.00"
+                    },
+                    "effective_price": {
+                        "type": "string",
+                        "example": "40.00"
+                    },
+                    "is_promotion": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "promotion_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "available_quantity": {
+                        "type": "string",
+                        "example": "5.000"
+                    },
+                    "total_shop_stock": {
+                        "type": "string",
+                        "example": "10.000"
+                    },
+                    "promotion_ends_at": {
+                        "type": "string",
+                        "example": "2026-07-30T12:00:00.000000Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProductSkuInput": {
+                "required": [
+                    "product_id",
+                    "sku",
+                    "unit",
+                    "transfer_batch_quantity",
+                    "transfer_fee_per_batch"
+                ],
+                "properties": {
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "CIMENTO-50"
+                    },
+                    "barcode": {
+                        "type": "string",
+                        "example": "789000000001",
+                        "nullable": true
+                    },
+                    "unit": {
+                        "type": "string",
+                        "example": "saco"
+                    },
+                    "weight": {
+                        "type": "number",
+                        "example": 50,
+                        "nullable": true
+                    },
+                    "length": {
+                        "type": "number",
+                        "example": 60,
+                        "nullable": true
+                    },
+                    "width": {
+                        "type": "number",
+                        "example": 40,
+                        "nullable": true
+                    },
+                    "height": {
+                        "type": "number",
+                        "example": 10,
+                        "nullable": true
+                    },
+                    "transfer_batch_quantity": {
+                        "type": "number",
+                        "example": 5
+                    },
+                    "transfer_fee_per_batch": {
+                        "type": "number",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
+            "ProductSku": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "CIMENTO-50"
+                    },
+                    "barcode": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "unit": {
+                        "type": "string",
+                        "example": "saco"
+                    },
+                    "weight": {
+                        "type": "string",
+                        "example": "50.000",
+                        "nullable": true
+                    },
+                    "dimensions": {
+                        "type": "object"
+                    },
+                    "transfer": {
+                        "type": "object"
+                    },
+                    "total_available": {
+                        "type": "string",
+                        "example": "10.000",
+                        "nullable": true
+                    },
+                    "best_offer": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Offer"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "offers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Offer"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductSkuResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/ProductSku"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductSkusPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductSku"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "Product": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Cimento CP II 50kg"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "cimento-cp-ii-50kg"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "brand": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Brand"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "subcategories": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Subcategory"
+                        }
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductImage"
+                        }
+                    },
+                    "skus": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductSku"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Product"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductsPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Product"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "Warehouse": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Metalar Matriz"
+                    }
+                },
+                "type": "object"
+            },
+            "Shop": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "matriz"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Metalar Matriz"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "71999999999"
+                    },
+                    "cnpj": {
+                        "type": "string",
+                        "example": "11222333000181"
+                    },
+                    "address": {
+                        "type": "object"
+                    },
+                    "warehouse": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Warehouse"
+                            }
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ShopResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Shop"
+                    }
+                },
+                "type": "object"
+            },
+            "ShopsResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Shop"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Stock": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity_on_hand": {
+                        "type": "string",
+                        "example": "10.000"
+                    },
+                    "quantity_reserved": {
+                        "type": "string",
+                        "example": "0.000"
+                    },
+                    "quantity_available": {
+                        "type": "string",
+                        "example": "10.000"
+                    },
+                    "warehouse": {
+                        "type": "object"
+                    },
+                    "product_sku": {
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "StockResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Stock"
+                    }
+                },
+                "type": "object"
+            },
+            "StocksPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Stock"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "StockAdjustmentRequest": {
+                "required": [
+                    "quantity",
+                    "reason"
+                ],
+                "properties": {
+                    "quantity": {
+                        "type": "number",
+                        "example": 10
+                    },
+                    "reason": {
+                        "type": "string",
+                        "example": "Entrada inicial"
+                    }
+                },
+                "type": "object"
+            },
+            "StockMovement": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "adjustment"
+                    },
+                    "quantity": {
+                        "type": "string",
+                        "example": "10.000"
+                    },
+                    "quantity_before": {
+                        "type": "string",
+                        "example": "0.000"
+                    },
+                    "quantity_after": {
+                        "type": "string",
+                        "example": "10.000"
+                    },
+                    "reason": {
+                        "type": "string",
+                        "example": "Entrada inicial"
+                    },
+                    "stock": {
+                        "type": "object"
+                    },
+                    "user": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StockMovementsPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StockMovement"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPriceInput": {
+                "required": [
+                    "price"
+                ],
+                "properties": {
+                    "price": {
+                        "type": "number",
+                        "example": 50
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPrice": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "price": {
+                        "type": "string",
+                        "example": "50.00"
+                    },
+                    "shop": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "product_sku_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_sku": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "promotions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ShopSkuPromotion"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPriceResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/ShopSkuPrice"
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPricesPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ShopSkuPrice"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPromotionInput": {
+                "required": [
+                    "promotional_price",
+                    "quantity_limit"
+                ],
+                "properties": {
+                    "promotional_price": {
+                        "type": "number",
+                        "example": 40
+                    },
+                    "quantity_limit": {
+                        "type": "number",
+                        "example": 5
+                    },
+                    "starts_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "ends_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPromotion": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "promotional_price": {
+                        "type": "string",
+                        "example": "40.00"
+                    },
+                    "quantity_limit": {
+                        "type": "string",
+                        "example": "5.000"
+                    },
+                    "quantity_reserved": {
+                        "type": "string",
+                        "example": "0.000"
+                    },
+                    "quantity_sold": {
+                        "type": "string",
+                        "example": "0.000"
+                    },
+                    "quantity_remaining": {
+                        "type": "string",
+                        "example": "5.000"
+                    },
+                    "starts_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "ends_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "cancelled_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "product_sku": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "created_by": {
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPromotionResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/ShopSkuPromotion"
+                    }
+                },
+                "type": "object"
+            },
+            "ShopSkuPromotionsPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ShopSkuPromotion"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "MessageResponse": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Operacao realizada com sucesso."
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ForbiddenError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Voce nao tem permissao para acessar este recurso."
+                    }
+                },
+                "type": "object"
+            },
+            "NotFoundError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Resource not found."
+                    }
+                },
+                "type": "object"
+            },
+            "ConflictError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Nao e possivel remover este recurso."
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationLinks": {
+                "properties": {
+                    "first": {
+                        "type": "string",
+                        "example": "http://localhost/api/products?page=1",
+                        "nullable": true
+                    },
+                    "last": {
+                        "type": "string",
+                        "example": "http://localhost/api/products?page=3",
+                        "nullable": true
+                    },
+                    "prev": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "properties": {
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "from": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "path": {
+                        "type": "string",
+                        "example": "http://localhost/api/products"
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 15,
+                        "nullable": true
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 40
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "cpf",
+                    "phone"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Lucas Silva"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lucas@email.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "Senha@123"
+                    },
+                    "birthday": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1992-03-15",
+                        "nullable": true
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "12345678909"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "71999998888"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Lucas Silva"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "lucas@email.com"
+                    },
+                    "birthday": {
+                        "type": "string",
+                        "example": "15/03/1992",
+                        "nullable": true
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "example": "***.***.***-09",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "(71) 99999-8888",
+                        "nullable": true
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "common",
+                        "enum": [
+                            "common",
+                            "moderator",
+                            "admin"
+                        ]
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "23/07/2026 10:00:00",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "example": "23/07/2026 10:00:00",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserResponse": {
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/User"
+                    }
+                },
+                "type": "object"
+            },
+            "UsersPaginatedResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserRequest": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Lucas Silva"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "lucas@email.com"
+                    },
+                    "birthday": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1992-03-15",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "71999998888"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCpfRequest": {
+                "required": [
+                    "cpf"
+                ],
+                "properties": {
+                    "cpf": {
+                        "type": "string",
+                        "example": "12345678909"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdatePasswordRequest": {
+                "required": [
+                    "current_password",
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "current_password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "Senha@123"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "NovaSenha@123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "NovaSenha@123"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRoleRequest": {
+                "required": [
+                    "role"
+                ],
+                "properties": {
+                    "role": {
+                        "type": "string",
+                        "example": "moderator",
+                        "enum": [
+                            "common",
+                            "moderator",
+                            "admin"
+                        ]
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Informe o token JWT no formato: Bearer {token}",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Autenticacao e gerenciamento da sessao JWT."
+        },
+        {
+            "name": "Users",
+            "description": "Perfil, administracao de usuarios e papeis."
+        },
+        {
+            "name": "Public Catalog",
+            "description": "Consulta publica de lojas, marcas, produtos, categorias, subcategorias e SKUs."
+        },
+        {
+            "name": "Admin Catalog",
+            "description": "Operacoes administrativas de catalogo."
+        },
+        {
+            "name": "Staff Commerce",
+            "description": "Operacoes por loja: estoque, precos, promocoes e movimentacoes."
+        }
+    ]
+}

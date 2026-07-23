@@ -16,6 +16,10 @@ class IndexProductRequest extends FormRequest
         return [
             'category' => ['nullable', 'string', 'exists:categories,slug'],
             'subcategory' => ['nullable', 'string', 'exists:subcategories,slug'],
+            'brand' => ['nullable', 'string', 'exists:brands,slug'],
+            'search' => ['nullable', 'string', 'max:255'],
+            'in_stock' => ['nullable', 'boolean'],
+            'sort' => ['nullable', 'in:best_offer,name'],
         ];
     }
 }

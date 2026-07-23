@@ -6,7 +6,7 @@ class PhoneFormatter
 {
     public static function format(?string $phone): ?string
     {
-        if (!$phone) {
+        if (! $phone) {
             return null;
         }
 

@@ -20,10 +20,56 @@ class ProductController extends Controller
     public function index(IndexProductRequest $request): AnonymousResourceCollection
     {
         $filters = $request->validated();
+        $now = now();
+
+        $bestOfferSubquery = DB::table('shop_sku_prices')
+            ->selectRaw(
+                'MIN(CASE
+                    WHEN shop_sku_promotions.id IS NOT NULL
+                    THEN shop_sku_promotions.promotional_price
+                    ELSE shop_sku_prices.price
+                END)'
+            )
+            ->join(
+                'product_skus',
+                'product_skus.id',
+                '=',
+                'shop_sku_prices.product_sku_id',
+            )
+            ->join('warehouses', 'warehouses.shop_id', '=', 'shop_sku_prices.shop_id')
+            ->join('stocks', function ($join): void {
+                $join->on('stocks.warehouse_id', '=', 'warehouses.id')
+                    ->on('stocks.product_sku_id', '=', 'product_skus.id')
+                    ->whereColumn('stocks.quantity_on_hand', '>', 'stocks.quantity_reserved');
+            })
+            ->leftJoin('shop_sku_promotions', function ($join) use ($now): void {
+                $join->on(
+                    'shop_sku_promotions.shop_sku_price_id',
+                    '=',
+                    'shop_sku_prices.id',
+                )
+                    ->whereNull('shop_sku_promotions.cancelled_at')
+                    ->where('shop_sku_promotions.starts_at', '<=', $now)
+                    ->where(function ($query) use ($now): void {
+                        $query->whereNull('shop_sku_promotions.ends_at')
+                            ->orWhere('shop_sku_promotions.ends_at', '>=', $now);
+                    })
+                    ->whereRaw(
+                        'shop_sku_promotions.quantity_limit > '
+                        .'shop_sku_promotions.quantity_reserved + shop_sku_promotions.quantity_sold'
+                    )
+                    ->whereColumn(
+                        'shop_sku_promotions.promotional_price',
+                        '<',
+                        'shop_sku_prices.price',
+                    );
+            })
+            ->whereColumn('product_skus.product_id', 'products.id');
 
         $query = Product::query()
-            ->with(['brand', 'subcategories.category', 'subcategories.parent'])
-            ->orderBy('name')
+            ->select('products.*')
+            ->addSelect(['best_offer_price' => $bestOfferSubquery])
+            ->with($this->catalogRelations())
             ->when($filters['category'] ?? null, function ($query, string $slug): void {
                 $category = Category::where('slug', $slug)->firstOrFail();
 
@@ -46,7 +92,43 @@ class ProductController extends Controller
                     'subcategories',
                     fn ($query) => $query->whereIn('subcategories.id', $subcategoryIds),
                 );
-            });
+            })
+            ->when(
+                $filters['brand'] ?? null,
+                fn ($query, string $slug) => $query->whereHas(
+                    'brand',
+                    fn ($query) => $query->where('slug', $slug),
+                ),
+            )
+            ->when(
+                $filters['search'] ?? null,
+                fn ($query, string $search) => $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhereHas('skus', fn ($query) => $query
+                            ->where('sku', 'like', "%{$search}%")
+                            ->orWhere('barcode', 'like', "%{$search}%"));
+                }),
+            )
+            ->when(
+                $filters['in_stock'] ?? false,
+                fn ($query) => $query->whereHas(
+                    'skus.stocks',
+                    fn ($query) => $query->whereColumn(
+                        'quantity_on_hand',
+                        '>',
+                        'quantity_reserved',
+                    ),
+                ),
+            );
+
+        if (($filters['sort'] ?? 'best_offer') === 'name') {
+            $query->orderBy('name');
+        } else {
+            $query->orderByRaw('best_offer_price IS NULL')
+                ->orderBy('best_offer_price')
+                ->orderBy('name');
+        }
 
         $products = $query->paginate(15)->withQueryString();
 
@@ -68,7 +150,7 @@ class ProductController extends Controller
             return $product;
         });
 
-        $product->load(['brand', 'subcategories.category', 'subcategories.parent']);
+        $product->load($this->catalogRelations());
 
         return (new ProductResource($product))
             ->response()
@@ -77,7 +159,7 @@ class ProductController extends Controller
 
     public function show(Product $product): ProductResource
     {
-        $product->load(['brand', 'subcategories.category', 'subcategories.parent']);
+        $product->load($this->catalogRelations());
 
         return new ProductResource($product);
     }
@@ -106,16 +188,35 @@ class ProductController extends Controller
             }
         });
 
-        $product->load(['brand', 'subcategories.category', 'subcategories.parent']);
+        $product->load($this->catalogRelations());
 
         return new ProductResource($product);
     }
 
     public function destroy(Product $product): Response
     {
+        abort_if(
+            $product->skus()->exists(),
+            409,
+            'Nao e possivel excluir um produto que possui SKUs.',
+        );
+
         $product->delete();
 
         return response()->noContent();
+    }
+
+    private function catalogRelations(): array
+    {
+        return [
+            'brand',
+            'subcategories.category',
+            'subcategories.parent',
+            'images',
+            'skus.prices.shop',
+            'skus.prices.promotions',
+            'skus.stocks.warehouse.shop',
+        ];
     }
 
     private function uniqueSlug(string $name, ?Product $ignoredProduct = null): string

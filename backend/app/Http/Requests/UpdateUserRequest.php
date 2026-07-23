@@ -2,13 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Support\Formatters\PhoneFormatter;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-
-use App\Rules\ValidCpf;
-use App\Support\Formatters\CpfFormatter;
-use App\Support\Formatters\PhoneFormatter;
 
 class UpdateUserRequest extends FormRequest
 {

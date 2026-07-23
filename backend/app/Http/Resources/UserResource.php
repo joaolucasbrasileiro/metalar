@@ -5,9 +5,9 @@ namespace App\Http\Resources;
 use App\Enums\UserRole;
 use App\Support\Formatters\CpfFormatter;
 use App\Support\Formatters\PhoneFormatter;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends JsonResource
 {
@@ -76,5 +76,4 @@ class UserResource extends JsonResource
 
         return $links;
     }
-
 }

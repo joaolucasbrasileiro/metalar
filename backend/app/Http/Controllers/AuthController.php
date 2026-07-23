@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-
     public function register(StoreUserRequest $request): JsonResponse
     {
         $user = User::create($request->validated());
@@ -42,7 +41,7 @@ class AuthController extends Controller
 
         $token = Auth::guard('api')->attempt($credentials);
 
-        if (!$token) {
+        if (! $token) {
             return response()->json([
                 'message' => 'Credenciais invalidas.',
             ], 401);

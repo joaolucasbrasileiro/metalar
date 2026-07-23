@@ -17,7 +17,6 @@ class UpdateUserRoleRequest extends FormRequest
         return true;
     }
 
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,7 +28,7 @@ class UpdateUserRoleRequest extends FormRequest
             'role' => [
                 'required',
                 Rule::enum(UserRole::class),
-            ]
+            ],
         ];
     }
 }

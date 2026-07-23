@@ -5,18 +5,17 @@ namespace App\Http\Controllers;
 use App\Enums\UserRole;
 use App\Http\Requests\UpdateUserCpfRequest;
 use App\Http\Requests\UpdateUserPasswordRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateUserRoleRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-
-use App\Models\User;
-use App\Http\Resources\UserResource;
-use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    //Busca todos os usuários cadastrados na db
+    // Busca todos os usuários cadastrados na db
     public function index(): AnonymousResourceCollection
     {
         $this->authorizeAdminAccess();
@@ -26,7 +25,7 @@ class UserController extends Controller
         return UserResource::collection($users);
     }
 
-    //Exibe um usuário específico por ID (query params)
+    // Exibe um usuário específico por ID (query params)
     public function show(User $user): UserResource
     {
         $this->authorizeUserAccess($user);
@@ -41,7 +40,7 @@ class UserController extends Controller
     {
         $this->authorizeUserAccess($user);
 
-        $user->update($request -> validated());
+        $user->update($request->validated());
 
         return new UserResource($user);
     }
@@ -50,7 +49,7 @@ class UserController extends Controller
     {
         $this->authorizeUserAccess($user);
 
-        $user->cpf = $request -> validated()['cpf'];
+        $user->cpf = $request->validated()['cpf'];
         $user->save();
 
         return new UserResource($user);
@@ -60,11 +59,11 @@ class UserController extends Controller
     {
         $this->authorizeUserAccess($user);
 
-        $user->password = $request -> validated()['password'];
+        $user->password = $request->validated()['password'];
         $user->save();
 
         return response()->json([
-            'message' => 'Sua senha atualizada com sucesso!'
+            'message' => 'Sua senha atualizada com sucesso!',
         ]);
     }
 
@@ -84,7 +83,7 @@ class UserController extends Controller
     {
         $this->authorizeAdminAccess();
 
-        $user->role = $request -> validated()['role'];
+        $user->role = $request->validated()['role'];
         $user->save();
 
         return new UserResource($user);

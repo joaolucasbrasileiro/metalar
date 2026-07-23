@@ -6,7 +6,7 @@ class CpfFormatter
 {
     public static function mask(?string $cpf): ?string
     {
-        if (!$cpf) {
+        if (! $cpf) {
             return null;
         }
 
@@ -16,12 +16,12 @@ class CpfFormatter
             return null;
         }
 
-        return '***.***.***-' . substr($cpf, -2);
+        return '***.***.***-'.substr($cpf, -2);
     }
 
     public static function format(?string $cpf): ?string
     {
-        if (!$cpf) {
+        if (! $cpf) {
             return null;
         }
 

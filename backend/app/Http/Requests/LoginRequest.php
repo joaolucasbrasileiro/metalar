@@ -20,7 +20,7 @@ class LoginRequest extends FormRequest
         $this->merge([
             'login' => filter_var($login, FILTER_VALIDATE_EMAIL)
                 ? strtolower($login)
-                : CpfFormatter::onlyNumbers($login)
+                : CpfFormatter::onlyNumbers($login),
         ]);
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -18,7 +17,6 @@ class UpdateUserPasswordRequest extends FormRequest
         return true;
     }
 
-
     //
     public function rules(): array
     {
@@ -33,10 +31,10 @@ class UpdateUserPasswordRequest extends FormRequest
                 'string',
                 'confirmed',
                 (Password::min(8))
-                        ->mixedCase()
-                        ->numbers()
-                        ->symbols()
-                        ->letters(),
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->letters(),
             ],
         ];
     }
@@ -47,7 +45,7 @@ class UpdateUserPasswordRequest extends FormRequest
             function (Validator $validator) {
                 $user = $this->route('user');
 
-                if ($user && !Hash::check($this->input('current_password'), $user->password)) {
+                if ($user && ! Hash::check($this->input('current_password'), $user->password)) {
                     $validator->errors()->add(
                         'current_password',
                         'A senha atual esta incorreta.'
@@ -60,9 +58,7 @@ class UpdateUserPasswordRequest extends FormRequest
                         'Use uma nova senha que você não tenha usado anteriormente.'
                     );
                 }
-            }
+            },
         ];
     }
-
-
 }

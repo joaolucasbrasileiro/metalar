@@ -7,7 +7,6 @@ use App\Support\Formatters\CpfFormatter;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-
 class UpdateUserCpfRequest extends FormRequest
 {
     /**
@@ -27,7 +26,6 @@ class UpdateUserCpfRequest extends FormRequest
         }
     }
 
-
     //
     public function rules(): array
     {
@@ -38,9 +36,9 @@ class UpdateUserCpfRequest extends FormRequest
             'cpf' => [
                 'required',
                 'string',
-                new ValidCpf(),
+                new ValidCpf,
                 Rule::unique('users', 'cpf')->ignore($user->id),
-            ]
+            ],
         ];
     }
 }

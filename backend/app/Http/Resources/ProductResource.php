@@ -23,6 +23,8 @@ class ProductResource extends JsonResource
             'subcategories' => SubcategoryResource::collection(
                 $this->whenLoaded('subcategories')
             ),
+            'images' => ProductImageResource::collection($this->whenLoaded('images')),
+            'skus' => ProductSkuResource::collection($this->whenLoaded('skus')),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

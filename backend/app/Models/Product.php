@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['brand_id', 'name', 'slug', 'description'])]
 class Product extends Model
@@ -18,6 +19,16 @@ class Product extends Model
     public function subcategories(): BelongsToMany
     {
         return $this->belongsToMany(Subcategory::class);
+    }
+
+    public function skus(): HasMany
+    {
+        return $this->hasMany(ProductSku::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('position');
     }
 
     public function getRouteKeyName(): string
