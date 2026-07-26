@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Http\Requests\IndexProductRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -17,6 +18,42 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    public function bestSellers(): AnonymousResourceCollection
+    {
+        $paidSales = fn () => DB::table('order_items')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->whereColumn('order_items.product_id', 'products.id')
+            ->where('orders.status', OrderStatus::PAID->value);
+
+        $soldQuantitySubquery = $paidSales()
+            ->selectRaw('COALESCE(SUM(order_items.quantity), 0)');
+
+        $soldRevenueSubquery = $paidSales()
+            ->selectRaw('COALESCE(SUM(order_items.total), 0)');
+
+        $products = Product::query()
+            ->select('products.*')
+            ->addSelect([
+                'sold_quantity' => $soldQuantitySubquery,
+                'sold_revenue' => $soldRevenueSubquery,
+            ])
+            ->with($this->catalogRelations())
+            ->whereExists(
+                $paidSales()->selectRaw('1')
+            )
+            ->orderByDesc('sold_quantity')
+            ->orderByDesc('sold_revenue')
+            ->orderBy('name')
+            ->limit(12)
+            ->get()
+            ->each(fn (Product $product, int $index) => $product->setAttribute(
+                'sales_rank',
+                $index + 1,
+            ));
+
+        return ProductResource::collection($products);
+    }
+
     public function index(IndexProductRequest $request): AnonymousResourceCollection
     {
         $filters = $request->validated();

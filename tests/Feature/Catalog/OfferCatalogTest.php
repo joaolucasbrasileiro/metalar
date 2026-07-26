@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Enums\OrderStatus;
 use App\Enums\UserRole;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductSku;
@@ -391,6 +393,45 @@ class OfferCatalogTest extends TestCase
             ->assertJsonMissing(['id' => $product->id]);
     }
 
+    public function test_best_sellers_endpoint_returns_top_twelve_paid_products(): void
+    {
+        $shop = $this->createShop('matriz');
+        $pendingProduct = $this->createProduct('Produto pendente', 'produto-pendente');
+        $pendingSku = $this->createSku($pendingProduct, 'SKU-PENDING');
+
+        $this->createSoldItem(
+            $pendingProduct,
+            $pendingSku,
+            $shop,
+            quantity: 99,
+            unitPrice: 10,
+            status: OrderStatus::PENDING_PAYMENT,
+        );
+
+        for ($position = 1; $position <= 14; $position++) {
+            $quantity = 15 - $position;
+            $product = $this->createProduct(
+                "Produto {$position}",
+                "produto-{$position}",
+            );
+            $sku = $this->createSku($product, "SKU-{$position}");
+
+            $this->createSoldItem($product, $sku, $shop, $quantity, 10);
+        }
+
+        $this->getJson('/api/products/best-sellers')
+            ->assertOk()
+            ->assertJsonCount(12, 'data')
+            ->assertJsonPath('data.0.name', 'Produto 1')
+            ->assertJsonPath('data.0.sales_rank', 1)
+            ->assertJsonPath('data.0.sold_quantity', '14.000')
+            ->assertJsonPath('data.0.sold_revenue', '140.00')
+            ->assertJsonPath('data.11.name', 'Produto 12')
+            ->assertJsonPath('data.11.sales_rank', 12)
+            ->assertJsonMissing(['name' => 'Produto 13'])
+            ->assertJsonMissing(['name' => 'Produto pendente']);
+    }
+
     private function adminToken(): string
     {
         return Auth::guard('api')->login(User::factory()->create([
@@ -475,6 +516,38 @@ class OfferCatalogTest extends TestCase
             'promotional_price' => $promotionalPrice,
             'quantity_limit' => $quantity,
             'starts_at' => now()->subMinute(),
+        ]);
+    }
+
+    private function createSoldItem(
+        Product $product,
+        ProductSku $sku,
+        Shop $shop,
+        float $quantity,
+        float $unitPrice,
+        OrderStatus $status = OrderStatus::PAID,
+    ): void {
+        $order = Order::create([
+            'user_id' => User::factory()->create(['role' => UserRole::COMMON])->id,
+            'status' => $status,
+            'subtotal' => $quantity * $unitPrice,
+            'discount_total' => 0,
+            'total' => $quantity * $unitPrice,
+            'paid_at' => $status === OrderStatus::PAID ? now() : null,
+        ]);
+
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_sku_id' => $sku->id,
+            'shop_id' => $shop->id,
+            'quantity' => $quantity,
+            'regular_unit_price' => $unitPrice,
+            'unit_price' => $unitPrice,
+            'discount_total' => 0,
+            'total' => $quantity * $unitPrice,
+            'product_name' => $product->name,
+            'product_sku' => $sku->sku,
+            'shop_name' => $shop->name,
         ]);
     }
 }

@@ -96,6 +96,7 @@ Route::prefix('shops')->group(function () {
 });
 
 Route::apiResource('brands', BrandController::class)->only(['index', 'show']);
+Route::get('/products/best-sellers', [ProductController::class, 'bestSellers']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('subcategories', SubcategoryController::class)->only(['index', 'show']);
