@@ -9,5 +9,8 @@ enum PaymentAttemptStatus: string
     case REJECTED = 'rejected';
     case CANCELLED = 'cancelled';
     case EXPIRED = 'expired';
+    case REFUNDED = 'refunded';
+    case DISPUTED = 'disputed';
+    case LOST = 'lost';
     case ERROR = 'error';
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbacatePayWebhookController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
@@ -84,6 +85,10 @@ Route::prefix('cart')
         Route::delete('/items/{cartItem}', [CartController::class, 'destroyItem']);
         Route::delete('', [CartController::class, 'clear']);
     });
+
+Route::prefix('webhooks')->group(function () {
+    Route::post('/abacatepay', AbacatePayWebhookController::class);
+});
 
 Route::prefix('shops')->group(function () {
     Route::get('', [ShopController::class, 'index']);

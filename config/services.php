@@ -28,6 +28,7 @@ return [
         'api_key' => env('ABACATEPAY_API_KEY'),
         'base_url' => env('ABACATEPAY_BASE_URL', 'https://api.abacatepay.com/v2'),
         'webhook_secret' => env('ABACATEPAY_WEBHOOK_SECRET'),
+        'webhook_public_key' => env('ABACATEPAY_WEBHOOK_PUBLIC_KEY'),
     ],
 
     'ses' => [
