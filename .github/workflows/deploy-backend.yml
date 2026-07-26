@@ -1,0 +1,51 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: bcmath, intl, pdo_mysql, sqlite, zip
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run Pint
+        run: vendor/bin/pint --test
+
+      - name: Run tests
+        run: composer test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            set -e
+            export APP_DIR="${{ secrets.VPS_APP_DIR }}"
+            if [ -z "$APP_DIR" ]; then
+              export APP_DIR="/var/www/metalar/backend"
+            fi
+            bash "$APP_DIR/scripts/deploy.sh"

@@ -1,0 +1,77 @@
+services:
+  app:
+    build:
+      context: .
+      target: app
+    restart: unless-stopped
+    env_file:
+      - ${APP_ENV_FILE:-.env}
+    volumes:
+      - storage_data:/var/www/html/storage
+      - bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  nginx:
+    build:
+      context: .
+      target: nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - storage_data:/var/www/html/storage
+    depends_on:
+      - app
+
+  queue:
+    build:
+      context: .
+      target: app
+    restart: unless-stopped
+    env_file:
+      - ${APP_ENV_FILE:-.env}
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    volumes:
+      - storage_data:/var/www/html/storage
+      - bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  scheduler:
+    build:
+      context: .
+      target: app
+    restart: unless-stopped
+    env_file:
+      - ${APP_ENV_FILE:-.env}
+    command: php artisan schedule:work
+    volumes:
+      - storage_data:/var/www/html/storage
+      - bootstrap_cache:/var/www/html/bootstrap/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  bootstrap_cache:
+  mysql_data:
+  storage_data:
