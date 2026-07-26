@@ -29,6 +29,10 @@ use OpenApi\Attributes as OA;
     description: 'Perfil, administracao de usuarios e papeis.'
 )]
 #[OA\Tag(
+    name: 'Favorites',
+    description: 'Produtos favoritos do usuario autenticado.'
+)]
+#[OA\Tag(
     name: 'Public Catalog',
     description: 'Consulta publica de lojas, marcas, produtos, categorias, subcategorias e SKUs.'
 )]

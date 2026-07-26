@@ -211,6 +211,55 @@ class OfferCatalogTest extends TestCase
             ->assertJsonPath('data.is_active', true);
     }
 
+    public function test_reserved_stock_reduces_available_quantity_for_promotions(): void
+    {
+        $shop = $this->createShop('matriz');
+        $sku = $this->createSku();
+        $token = $this->adminToken();
+
+        $this->createOffer($shop, $sku, 10, 50, reservedQuantity: 4);
+
+        $this->withToken($token)
+            ->postJson(
+                "/api/staff/shops/{$shop->code}/product-skus/{$sku->sku}/promotions",
+                ['promotional_price' => 40, 'quantity_limit' => 7],
+            )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('quantity_limit');
+
+        $this->withToken($token)
+            ->postJson(
+                "/api/staff/shops/{$shop->code}/product-skus/{$sku->sku}/promotions",
+                ['promotional_price' => 40, 'quantity_limit' => 6],
+            )
+            ->assertCreated()
+            ->assertJsonPath('data.quantity_remaining', '6.000');
+    }
+
+    public function test_stock_adjustment_cannot_reduce_stock_below_reserved_quantity(): void
+    {
+        $shop = $this->createShop('matriz');
+        $sku = $this->createSku();
+        $token = $this->adminToken();
+
+        $this->createOffer($shop, $sku, 10, 50, reservedQuantity: 4);
+
+        $this->withToken($token)
+            ->postJson(
+                "/api/staff/shops/{$shop->code}/product-skus/{$sku->sku}/stock-adjustments",
+                ['quantity' => -7, 'reason' => 'Ajuste de inventario'],
+            )
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('quantity');
+
+        $this->assertDatabaseHas('stocks', [
+            'warehouse_id' => $shop->warehouse->id,
+            'product_sku_id' => $sku->id,
+            'quantity_on_hand' => '10.000',
+            'quantity_reserved' => '4.000',
+        ]);
+    }
+
     public function test_promotion_price_must_be_lower_than_regular_price(): void
     {
         $shop = $this->createShop('matriz');
@@ -397,11 +446,13 @@ class OfferCatalogTest extends TestCase
         ProductSku $sku,
         float $quantity,
         float $price,
+        float $reservedQuantity = 0,
     ): ShopSkuPrice {
         Stock::create([
             'warehouse_id' => $shop->warehouse->id,
             'product_sku_id' => $sku->id,
             'quantity_on_hand' => $quantity,
+            'quantity_reserved' => $reservedQuantity,
         ]);
 
         return ShopSkuPrice::create([

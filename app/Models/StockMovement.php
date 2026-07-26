@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
     'quantity',
     'quantity_before',
     'quantity_after',
+    'quantity_reserved_before',
+    'quantity_reserved_after',
     'reason',
     'reference_type',
     'reference_id',
@@ -26,6 +28,8 @@ class StockMovement extends Model
             'quantity' => 'decimal:3',
             'quantity_before' => 'decimal:3',
             'quantity_after' => 'decimal:3',
+            'quantity_reserved_before' => 'decimal:3',
+            'quantity_reserved_after' => 'decimal:3',
         ];
     }
 

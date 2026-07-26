@@ -38,6 +38,16 @@ class Shop extends Model
         return $this->hasMany(ShopSkuPrice::class);
     }
 
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function cartItems(): HasMany
+    {
+        return $this->hasMany(CartItem::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'code';

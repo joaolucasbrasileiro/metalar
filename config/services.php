@@ -22,6 +22,14 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    'payment_gateway' => env('PAYMENT_GATEWAY', 'fake'),
+
+    'abacatepay' => [
+        'api_key' => env('ABACATEPAY_API_KEY'),
+        'base_url' => env('ABACATEPAY_BASE_URL', 'https://api.abacatepay.com/v2'),
+        'webhook_secret' => env('ABACATEPAY_WEBHOOK_SECRET'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

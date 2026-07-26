@@ -11,6 +11,13 @@ use OpenApi\Attributes as OA;
     ]
 )]
 #[OA\Schema(
+    schema: 'FavoriteStatusResponse',
+    properties: [
+        new OA\Property(property: 'message', type: 'string', example: 'Produto adicionado aos favoritos.'),
+        new OA\Property(property: 'is_favorite', type: 'boolean', example: true),
+    ]
+)]
+#[OA\Schema(
     schema: 'ValidationError',
     properties: [
         new OA\Property(property: 'message', type: 'string', example: 'The given data was invalid.'),

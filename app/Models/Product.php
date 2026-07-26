@@ -21,9 +21,19 @@ class Product extends Model
         return $this->belongsToMany(Subcategory::class);
     }
 
+    public function favoritedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'favorite_products');
+    }
+
     public function skus(): HasMany
     {
         return $this->hasMany(ProductSku::class);
+    }
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     public function images(): HasMany

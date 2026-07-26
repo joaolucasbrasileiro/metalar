@@ -15,6 +15,8 @@ class StockMovementResource extends JsonResource
             'quantity' => $this->quantity,
             'quantity_before' => $this->quantity_before,
             'quantity_after' => $this->quantity_after,
+            'quantity_reserved_before' => $this->quantity_reserved_before,
+            'quantity_reserved_after' => $this->quantity_reserved_after,
             'reason' => $this->reason,
             'stock' => $this->whenLoaded('stock', fn () => [
                 'id' => $this->stock->id,

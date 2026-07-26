@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FavoriteProductController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentAttemptController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\ProductSkuController;
@@ -10,6 +14,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\ShopSkuPriceController;
 use App\Http\Controllers\ShopSkuPromotionController;
 use App\Http\Controllers\ShopUserController;
+use App\Http\Controllers\StaffOrderController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockMovementController;
@@ -47,6 +52,38 @@ Route::prefix('users')->group(function () {
         Route::patch('/{user}/role', [UserController::class, 'updateRole']);
     });
 });
+
+Route::prefix('me')
+    ->middleware('auth:api')
+    ->group(function () {
+        Route::get('/favorites', [FavoriteProductController::class, 'index']);
+        Route::post('/favorites/{product}', [FavoriteProductController::class, 'store']);
+        Route::delete('/favorites/{product}', [FavoriteProductController::class, 'destroy']);
+        Route::get('/orders', [OrderController::class, 'index']);
+    });
+
+Route::prefix('orders')
+    ->middleware('auth:api')
+    ->group(function () {
+        Route::post('', [OrderController::class, 'store']);
+        Route::get('/{order}', [OrderController::class, 'show']);
+        Route::post('/{order}/cancel', [OrderController::class, 'cancel']);
+        Route::post('/{order}/payment-attempts', [PaymentAttemptController::class, 'store']);
+        Route::post(
+            '/{order}/payment-attempts/{paymentAttempt}/fake-approve',
+            [PaymentAttemptController::class, 'fakeApprove'],
+        );
+    });
+
+Route::prefix('cart')
+    ->middleware('auth:api')
+    ->group(function () {
+        Route::get('', [CartController::class, 'show']);
+        Route::post('/items', [CartController::class, 'storeItem']);
+        Route::patch('/items/{cartItem}', [CartController::class, 'updateItem']);
+        Route::delete('/items/{cartItem}', [CartController::class, 'destroyItem']);
+        Route::delete('', [CartController::class, 'clear']);
+    });
 
 Route::prefix('shops')->group(function () {
     Route::get('', [ShopController::class, 'index']);
@@ -94,6 +131,10 @@ Route::prefix('staff')
             ->name('prices.index');
         Route::get('/shops/{shop}/promotions', [ShopSkuPromotionController::class, 'index'])
             ->name('promotions.index');
+        Route::get('/shops/{shop}/orders', [StaffOrderController::class, 'index'])
+            ->name('orders.index');
+        Route::get('/shops/{shop}/orders/{order}', [StaffOrderController::class, 'show'])
+            ->name('orders.show');
         Route::post(
             '/shops/{shop}/product-skus/{productSku}/stock-adjustments',
             [StockAdjustmentController::class, 'store'],

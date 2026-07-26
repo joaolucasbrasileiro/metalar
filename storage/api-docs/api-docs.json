@@ -1163,6 +1163,166 @@
                 ]
             }
         },
+        "/api/me/favorites": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Lista favoritos do usuario autenticado",
+                "operationId": "favoritesIndex",
+                "responses": {
+                    "200": {
+                        "description": "Produtos favoritos paginados.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductsPaginatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Nao autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/me/favorites/{product}": {
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Adiciona produto aos favoritos",
+                "operationId": "favoritesStore",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Slug do produto.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii-50kg"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Produto adicionado aos favoritos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteStatusResponse"
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Produto ja estava nos favoritos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteStatusResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Nao autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Remove produto dos favoritos",
+                "operationId": "favoritesDestroy",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Slug do produto.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "cimento-cp-ii-50kg"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto removido dos favoritos.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteStatusResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Nao autenticado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthorizedError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto nao encontrado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/shops": {
             "get": {
                 "tags": [
@@ -3480,6 +3640,19 @@
                 },
                 "type": "object"
             },
+            "FavoriteStatusResponse": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Produto adicionado aos favoritos."
+                    },
+                    "is_favorite": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
             "ValidationError": {
                 "properties": {
                     "message": {
@@ -3795,6 +3968,10 @@
         {
             "name": "Users",
             "description": "Perfil, administracao de usuarios e papeis."
+        },
+        {
+            "name": "Favorites",
+            "description": "Produtos favoritos do usuario autenticado."
         },
         {
             "name": "Public Catalog",
