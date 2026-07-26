@@ -167,7 +167,9 @@ class ProductController extends Controller
                 ->orderBy('name');
         }
 
-        $products = $query->paginate(15)->withQueryString();
+        $products = $query
+            ->paginate($filters['per_page'] ?? 15)
+            ->withQueryString();
 
         return ProductResource::collection($products);
     }
