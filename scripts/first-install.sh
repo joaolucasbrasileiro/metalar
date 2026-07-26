@@ -12,11 +12,37 @@ if [ ! -f .env ]; then
     exit 1
 fi
 
-docker compose -f "$COMPOSE_FILE" up -d --build
+set_env_value() {
+    local key="$1"
+    local value="$2"
+
+    if grep -q "^${key}=" .env; then
+        sed -i.bak "s|^${key}=.*|${key}=${value}|" .env
+        rm -f .env.bak
+        return
+    fi
+
+    printf '\n%s=%s\n' "$key" "$value" >> .env
+}
+
+ensure_env_secret() {
+    local key="$1"
+    local value="$2"
+    local current
+
+    current="$(grep "^${key}=" .env | tail -n 1 | cut -d= -f2- || true)"
+
+    if [ -z "$current" ]; then
+        set_env_value "$key" "$value"
+    fi
+}
+
+ensure_env_secret "APP_KEY" "base64:$(openssl rand -base64 32)"
+ensure_env_secret "JWT_SECRET" "$(openssl rand -base64 64 | tr -d '\n')"
+
+docker compose -f "$COMPOSE_FILE" up -d --build --force-recreate
 
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan package:discover --ansi
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan key:generate --force
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan jwt:secret --force
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan migrate --force
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan storage:link
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan config:cache
