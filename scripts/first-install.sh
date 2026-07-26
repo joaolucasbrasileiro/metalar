@@ -14,6 +14,7 @@ fi
 
 docker compose -f "$COMPOSE_FILE" up -d --build
 
+docker compose -f "$COMPOSE_FILE" exec -T app php artisan package:discover --ansi
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan key:generate --force
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan jwt:secret --force
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan migrate --force

@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine AS app
+FROM php:8.4-fpm-alpine AS app
 
 RUN apk add --no-cache \
         bash \
@@ -27,6 +27,7 @@ RUN composer install \
         --no-interaction \
         --prefer-dist \
         --optimize-autoloader \
+        --no-scripts \
     && mkdir -p \
         storage/app/public \
         storage/framework/cache \
