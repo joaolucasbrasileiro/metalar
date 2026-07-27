@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\PersonType;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -14,8 +15,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-#[Fillable(['name', 'email', 'password', 'birthday', 'cpf', 'phone'])]
-#[Hidden(['password', 'remember_token', 'cpf', 'phone'])]
+#[Fillable(['name', 'email', 'password', 'birthday', 'cpf', 'phone', 'cnpj', 'person_type', 'rules'])]
+#[Hidden(['password', 'remember_token', 'cpf', 'phone', 'cnpj'])]
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
@@ -33,6 +34,8 @@ class User extends Authenticatable implements JWTSubject
             'is_active' => 'boolean',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'person_type' => PersonType::class,
+            'rules' => 'boolean',
             'birthday' => 'date',
         ];
     }

@@ -25,6 +25,7 @@ class UserResource extends JsonResource
 
             'phone' => PhoneFormatter::format($this->phone),
 
+            'rules' => $this->rules,
             'role' => $this->role?->value,
 
             'created_at' => $this->created_at?->format('d/m/Y H:i:s'),

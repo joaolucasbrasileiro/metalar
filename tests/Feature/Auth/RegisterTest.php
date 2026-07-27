@@ -18,8 +18,10 @@ class RegisterTest extends TestCase
             'email' => '  MARIA@EXAMPLE.COM  ',
             'password' => 'Password@123',
             'birthday' => '1990-05-20',
+            'person_type' => 'individual',
             'cpf' => '529.982.247-25',
             'phone' => '(11) 99999-9999',
+            'rules' => true,
         ]);
 
         $response
@@ -27,13 +29,16 @@ class RegisterTest extends TestCase
             ->assertJsonPath('message', 'Conta criada com sucesso.')
             ->assertJsonPath('data.name', 'Maria da Silva')
             ->assertJsonPath('data.email', 'maria@example.com')
-            ->assertJsonPath('data.cpf', '***.***.***-25');
+            ->assertJsonPath('data.cpf', '***.***.***-25')
+            ->assertJsonPath('data.rules', true);
 
         $this->assertDatabaseHas('users', [
             'name' => 'Maria da Silva',
             'email' => 'maria@example.com',
+            'person_type' => 'individual',
             'cpf' => '52998224725',
             'phone' => '11999999999',
+            'rules' => true,
         ]);
 
         $user = User::where('email', 'maria@example.com')->firstOrFail();
@@ -50,8 +55,9 @@ class RegisterTest extends TestCase
                 'name',
                 'email',
                 'password',
-                'cpf',
                 'phone',
+                'person_type',
+                'rules',
             ]);
     }
 
@@ -62,8 +68,10 @@ class RegisterTest extends TestCase
             'email' => 'not-an-email',
             'password' => 'weak',
             'birthday' => now()->addDay()->format('Y-m-d'),
+            'person_type' => 'individual',
             'cpf' => '111.111.111-11',
             'phone' => '1234',
+            'rules' => true,
         ])
             ->assertStatus(422)
             ->assertJsonValidationErrors([
@@ -88,8 +96,10 @@ class RegisterTest extends TestCase
             'name' => 'Another User',
             'email' => 'EXISTING@EXAMPLE.COM',
             'password' => 'Password@123',
+            'person_type' => 'individual',
             'cpf' => '529.982.247-25',
             'phone' => '(11) 99999-9999',
+            'rules' => true,
         ])
             ->assertStatus(422)
             ->assertJsonValidationErrors([

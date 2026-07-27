@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Support\Formatters\CpfFormatter;
+use App\Support\Formatters\DocumentFormatter;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
@@ -20,7 +20,7 @@ class LoginRequest extends FormRequest
         $this->merge([
             'login' => filter_var($login, FILTER_VALIDATE_EMAIL)
                 ? strtolower($login)
-                : CpfFormatter::onlyNumbers($login),
+                : DocumentFormatter::onlyNumbers($login),
         ]);
     }
 

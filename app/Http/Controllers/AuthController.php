@@ -15,6 +15,8 @@ class AuthController extends Controller
     {
         $user = User::create($request->validated());
 
+        $user->refresh();
+
         return (new UserResource($user))
             ->additional([
                 'message' => 'Conta criada com sucesso.',
