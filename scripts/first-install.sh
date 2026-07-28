@@ -42,7 +42,10 @@ ensure_env_secret "JWT_SECRET" "$(openssl rand -base64 64 | tr -d '\n')"
 
 docker compose -f "$COMPOSE_FILE" up -d --build --force-recreate
 
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan optimize:clear
+docker compose -f "$COMPOSE_FILE" exec -T app php -r '$keys = ["DB_CONNECTION", "DB_SCHEMA", "DB_SSLMODE"]; foreach ($keys as $key) { echo $key."=".(getenv($key) ?: "").PHP_EOL; } echo "DB_URL=".(getenv("DB_URL") || getenv("DATABASE_URL") ? "set" : "empty").PHP_EOL; if (getenv("DB_CONNECTION") !== "pgsql") { fwrite(STDERR, "DB_CONNECTION must be pgsql for docker-compose.prod.yml.\n"); exit(1); }'
+docker compose -f "$COMPOSE_FILE" exec -T app php artisan config:clear
+docker compose -f "$COMPOSE_FILE" exec -T app php artisan route:clear
+docker compose -f "$COMPOSE_FILE" exec -T app php artisan view:clear
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan db:ensure-schema
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan package:discover --ansi
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan migrate --force
