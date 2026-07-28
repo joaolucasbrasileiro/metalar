@@ -46,9 +46,13 @@ class AuthController extends Controller
 
         $login = $validated['login'];
 
-        $field = filter_var($login, FILTER_VALIDATE_EMAIL)
-            ? 'email'
-            : 'cpf';
+        $field = $this->loginField($login);
+
+        if (! $field) {
+            return response()->json([
+                'message' => 'Credenciais invalidas.',
+            ], 401);
+        }
 
         $credentials = [
             $field => $login,
@@ -74,6 +78,19 @@ class AuthController extends Controller
 
         return $this->respondWithToken($token);
 
+    }
+
+    private function loginField(string $login): ?string
+    {
+        if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            return 'email';
+        }
+
+        return match (strlen($login)) {
+            11 => 'cpf',
+            14 => 'cnpj',
+            default => null,
+        };
     }
 
     public function activate(Request $request, User $user, string $hash): JsonResponse|RedirectResponse

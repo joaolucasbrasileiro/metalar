@@ -15,19 +15,16 @@
             <td align="center">
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width:100%; max-width:640px; border-collapse:collapse;">
                     <tr>
-                        <td style="padding:0 0 18px 0;">
-                            <img src="{{ $logoUrl }}" width="170" alt="Metalar" style="display:block; width:170px; max-width:70%; height:auto; border:0;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="background:#ffffff; border:1px solid #e4e4e7; border-radius:8px; overflow:hidden;">
+                        <td style="background:#ffffff; border:1px solid #d4d4d8; border-radius:8px; overflow:hidden;">
                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse;">
                                 <tr>
-                                    <td style="height:8px; background:#ffd900; font-size:0; line-height:0;">&nbsp;</td>
+                                    <td style="padding:28px 36px 24px 36px; background:#ffffff; border-bottom:1px solid #e4e4e7;">
+                                        <img src="{{ $logoUrl }}" width="156" alt="Metalar" style="display:block; width:156px; max-width:70%; height:auto; border:0;">
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding:36px 36px 16px 36px;">
-                                        <p style="margin:0 0 10px 0; color:#e30712; font-size:12px; line-height:18px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;">
+                                    <td style="padding:34px 36px 16px 36px;">
+                                        <p style="margin:0 0 10px 0; color:#3f3f46; font-size:12px; line-height:18px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;">
                                             Seguranca da conta
                                         </p>
                                         <h1 style="margin:0; color:#18181b; font-size:28px; line-height:34px; font-weight:800;">
@@ -47,7 +44,7 @@
                                 </tr>
                                 <tr>
                                     <td style="padding:12px 36px 30px 36px;">
-                                        <a href="{{ $resetUrl }}" style="display:inline-block; background:#ffd900; color:#18181b; border-radius:6px; padding:14px 22px; font-size:14px; line-height:18px; font-weight:800; text-decoration:none;">
+                                        <a href="{{ $resetUrl }}" style="display:inline-block; background:#18181b; color:#ffffff; border-radius:6px; padding:14px 22px; font-size:14px; line-height:18px; font-weight:800; text-decoration:none;">
                                             Criar nova senha
                                         </a>
                                     </td>
@@ -66,7 +63,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding:18px 4px 0 4px;">
+                        <td style="padding:18px 4px 0 4px; text-align:center;">
                             <p style="margin:0; color:#71717a; font-size:12px; line-height:20px;">
                                 Metalar - Email transacional enviado para proteger sua conta.
                             </p>

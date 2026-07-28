@@ -22,7 +22,7 @@ class ResetPasswordNotification extends Notification
         return (new MailMessage)
             ->subject('Redefina sua senha da Metalar')
             ->view('emails.auth.reset-password', [
-                'logoUrl' => url('/logo.svg'),
+                'logoUrl' => url('/logo-email.svg'),
                 'resetUrl' => $this->resetUrl,
                 'userName' => $notifiable->name,
             ]);

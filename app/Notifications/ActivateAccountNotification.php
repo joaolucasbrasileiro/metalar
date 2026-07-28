@@ -23,7 +23,7 @@ class ActivateAccountNotification extends Notification
             ->subject('Ative sua conta na Metalar')
             ->view('emails.auth.activate-account', [
                 'activationUrl' => $this->activationUrl,
-                'logoUrl' => url('/logo.svg'),
+                'logoUrl' => url('/logo-email.svg'),
                 'userName' => $notifiable->name,
             ]);
     }

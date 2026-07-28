@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Enums\PersonType;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -86,6 +87,66 @@ class LoginTest extends TestCase
 
     }
 
+    public function test_login_with_cnpj_and_returnerd_token(): void
+    {
+        $user = $this->createUser([
+            'person_type' => PersonType::COMPANY,
+            'cpf' => null,
+            'cnpj' => '11222333000181',
+        ]);
+
+        $response = $this->postJson('/api/auth/login', [
+            'login' => '11.222.333/0001-81',
+            'password' => 'Password@123',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonPath('token_type', 'bearer')
+            ->assertJsonPath('user.id', $user->id)
+            ->assertJsonPath('user.name', $user->name)
+            ->assertJsonPath('user.email', $user->email);
+
+        $token = $response->json('access_token');
+        $expiresIn = $response->json('expires_in');
+
+        $this->assertIsString($token);
+        $this->assertNotEmpty($token);
+        $this->assertIsInt($expiresIn);
+        $this->assertGreaterThan(0, $expiresIn);
+
+    }
+
+    public function test_login_with_unmasked_cnpj_and_returnerd_token(): void
+    {
+        $user = $this->createUser([
+            'person_type' => PersonType::COMPANY,
+            'cpf' => null,
+            'cnpj' => '11222333000181',
+        ]);
+
+        $this->postJson('/api/auth/login', [
+            'login' => '11222333000181',
+            'password' => 'Password@123',
+        ])
+            ->assertStatus(200)
+            ->assertJsonPath('user.id', $user->id)
+            ->assertJsonPath('user.email', $user->email);
+    }
+
+    public function test_login_rejects_document_with_invalid_length(): void
+    {
+        $this->createUser();
+
+        $this->postJson('/api/auth/login', [
+            'login' => '123456789',
+            'password' => 'Password@123',
+        ])
+            ->assertStatus(401)
+            ->assertJsonPath('message', 'Credenciais invalidas.')
+            ->assertJsonMissingPath('access_token');
+    }
+
     public function test_login_normalizes_email_before_authentication(): void
     {
         $user = $this->createUser();
@@ -135,6 +196,27 @@ class LoginTest extends TestCase
 
         $response = $this->postJson('/api/auth/login', [
             'login' => 'testuser@test.com',
+            'password' => 'Password@123',
+        ]);
+
+        $response
+            ->assertStatus(403)
+            ->assertJsonPath('message', 'Ative sua conta pelo email enviado antes de entrar.')
+            ->assertJsonMissingPath('access_token');
+
+    }
+
+    public function test_access_without_an_active_company_user(): void
+    {
+        $this->createUser([
+            'person_type' => PersonType::COMPANY,
+            'cpf' => null,
+            'cnpj' => '11222333000181',
+            'is_active' => false,
+        ]);
+
+        $response = $this->postJson('/api/auth/login', [
+            'login' => '11.222.333/0001-81',
             'password' => 'Password@123',
         ]);
 
