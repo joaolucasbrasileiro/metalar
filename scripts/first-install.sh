@@ -43,6 +43,7 @@ ensure_env_secret "JWT_SECRET" "$(openssl rand -base64 64 | tr -d '\n')"
 docker compose -f "$COMPOSE_FILE" up -d --build --force-recreate
 
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan optimize:clear
+docker compose -f "$COMPOSE_FILE" exec -T app php artisan db:ensure-schema
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan package:discover --ansi
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan migrate --force
 docker compose -f "$COMPOSE_FILE" exec -T app php artisan storage:link
