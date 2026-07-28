@@ -5,6 +5,8 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\PersonType;
 use App\Enums\UserRole;
+use App\Notifications\ActivateAccountNotification;
+use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\URL;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 #[Fillable(['name', 'email', 'password', 'birthday', 'cpf', 'phone', 'cnpj', 'person_type', 'rules'])]
@@ -43,6 +46,38 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
+    }
+
+    public function sendActivationNotification(): void
+    {
+        $this->notify(new ActivateAccountNotification($this->activationUrl()));
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $resetUrl = URL::query($this->frontendUrl('/reset-password'), [
+            'token' => $token,
+            'email' => $this->email,
+        ]);
+
+        $this->notify(new ResetPasswordNotification($resetUrl));
+    }
+
+    private function activationUrl(): string
+    {
+        return URL::temporarySignedRoute(
+            'auth.activate',
+            now()->addMinutes(60),
+            [
+                'user' => $this->id,
+                'hash' => sha1($this->email),
+            ],
+        );
+    }
+
+    private function frontendUrl(string $path): string
+    {
+        return rtrim((string) config('services.frontend.url'), '/').'/'.ltrim($path, '/');
     }
 
     public function shops(): BelongsToMany

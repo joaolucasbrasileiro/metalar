@@ -139,7 +139,8 @@ class LoginTest extends TestCase
         ]);
 
         $response
-            ->assertStatus(401)
+            ->assertStatus(403)
+            ->assertJsonPath('message', 'Ative sua conta pelo email enviado antes de entrar.')
             ->assertJsonMissingPath('access_token');
 
     }

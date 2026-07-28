@@ -3,8 +3,10 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Notifications\ActivateAccountNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class RegisterTest extends TestCase
@@ -13,6 +15,8 @@ class RegisterTest extends TestCase
 
     public function test_user_can_register_with_valid_data(): void
     {
+        Notification::fake();
+
         $response = $this->postJson('/api/auth/register', [
             'name' => '  Maria da Silva  ',
             'email' => '  MARIA@EXAMPLE.COM  ',
@@ -26,7 +30,7 @@ class RegisterTest extends TestCase
 
         $response
             ->assertStatus(201)
-            ->assertJsonPath('message', 'Conta criada com sucesso.')
+            ->assertJsonPath('message', 'Conta criada com sucesso. Enviamos um email para ativacao da conta.')
             ->assertJsonPath('data.name', 'Maria da Silva')
             ->assertJsonPath('data.email', 'maria@example.com')
             ->assertJsonPath('data.cpf', '***.***.***-25')
@@ -39,12 +43,18 @@ class RegisterTest extends TestCase
             'cpf' => '52998224725',
             'phone' => '11999999999',
             'rules' => true,
+            'is_active' => false,
+            'email_verified_at' => null,
         ]);
 
         $user = User::where('email', 'maria@example.com')->firstOrFail();
 
         $this->assertTrue(Hash::check('Password@123', $user->password));
         $this->assertNotSame('Password@123', $user->password);
+        $this->assertFalse($user->is_active);
+        $this->assertNull($user->email_verified_at);
+
+        Notification::assertSentTo($user, ActivateAccountNotification::class);
     }
 
     public function test_registration_requires_mandatory_fields(): void

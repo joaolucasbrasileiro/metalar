@@ -22,6 +22,10 @@ return [
         'key' => env('RESEND_API_KEY'),
     ],
 
+    'frontend' => [
+        'url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
+    ],
+
     'payment_gateway' => env('PAYMENT_GATEWAY', 'fake'),
 
     'abacatepay' => [

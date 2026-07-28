@@ -34,6 +34,11 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register']);
+    Route::get('/activate/{user}/{hash}', [AuthController::class, 'activate'])
+        ->name('auth.activate');
+    Route::post('/activation/resend', [AuthController::class, 'resendActivation']);
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
     Route::middleware('auth:api')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
