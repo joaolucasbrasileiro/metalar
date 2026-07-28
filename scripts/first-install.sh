@@ -7,8 +7,8 @@ COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
 cd "$APP_DIR"
 
 if [ ! -f .env ]; then
-    cp .env.prod.example .env
-    echo "Created .env from .env.prod.example. Edit it before running deploy."
+    cp .env.example .env
+    echo "Created .env from .env.example. Edit it before running deploy."
     exit 1
 fi
 

@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 *.md
+!SUPABASE_DATABASE_SETUP.md
 .env
 .env.backup
 .env.production

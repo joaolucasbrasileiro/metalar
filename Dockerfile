@@ -7,6 +7,7 @@ RUN apk add --no-cache \
         icu-dev \
         libzip-dev \
         oniguruma-dev \
+        postgresql-dev \
         unzip \
         zip \
     && docker-php-ext-install \
@@ -14,6 +15,7 @@ RUN apk add --no-cache \
         intl \
         opcache \
         pdo_mysql \
+        pdo_pgsql \
         zip
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
