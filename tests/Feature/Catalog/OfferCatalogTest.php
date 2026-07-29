@@ -100,6 +100,27 @@ class OfferCatalogTest extends TestCase
         ]);
     }
 
+    public function test_staff_shop_list_is_limited_to_assigned_moderator_shops(): void
+    {
+        $assignedShop = $this->createShop('matriz');
+        $this->createShop('filial01');
+        $moderator = User::factory()->create(['role' => UserRole::MODERATOR]);
+        $moderator->shops()->attach($assignedShop);
+
+        $this->withToken(Auth::guard('api')->login($moderator))
+            ->getJson('/api/staff/shops')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.code', 'matriz');
+    }
+
+    public function test_common_user_cannot_list_staff_shops(): void
+    {
+        $this->withToken(Auth::guard('api')->login(User::factory()->create()))
+            ->getJson('/api/staff/shops')
+            ->assertForbidden();
+    }
+
     public function test_admin_can_adjust_stock_for_any_shop(): void
     {
         $shop = $this->createShop('matriz');

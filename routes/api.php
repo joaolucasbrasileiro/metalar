@@ -138,6 +138,14 @@ Route::prefix('admin')
 
 Route::prefix('staff')
     ->name('staff.')
+    ->middleware('auth:api')
+    ->group(function () {
+        Route::get('/shops', [ShopController::class, 'staffIndex'])
+            ->name('shops.index');
+    });
+
+Route::prefix('staff')
+    ->name('staff.')
     ->middleware(['auth:api', 'shop.staff'])
     ->group(function () {
         Route::get('/shops/{shop}/stocks', [StockController::class, 'index'])
