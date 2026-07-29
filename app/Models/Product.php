@@ -8,9 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['brand_id', 'name', 'slug', 'description'])]
+#[Fillable(['brand_id', 'name', 'slug', 'description', 'specifications'])]
 class Product extends Model
 {
+    protected function casts(): array
+    {
+        return [
+            'specifications' => 'array',
+        ];
+    }
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);

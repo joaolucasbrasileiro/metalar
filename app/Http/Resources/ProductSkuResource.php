@@ -19,6 +19,7 @@ class ProductSkuResource extends JsonResource
             'id' => $this->id,
             'sku' => $this->sku,
             'barcode' => $this->barcode,
+            'variant_name' => $this->variant_name,
             'unit' => $this->unit,
             'weight' => $this->weight,
             'dimensions' => [

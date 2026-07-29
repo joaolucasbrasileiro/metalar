@@ -28,6 +28,7 @@ class StoreProductSkuRequest extends FormRequest
             'product_id' => ['required', 'integer', 'exists:products,id'],
             'sku' => ['required', 'string', 'max:100', 'unique:product_skus,sku'],
             'barcode' => ['nullable', 'string', 'max:100', 'unique:product_skus,barcode'],
+            'variant_name' => ['nullable', 'string', 'max:255'],
             'unit' => ['required', 'string', 'max:20'],
             'weight' => ['nullable', 'numeric', 'min:0'],
             'length' => ['nullable', 'numeric', 'min:0'],

@@ -37,6 +37,33 @@ class BrandProductCrudTest extends TestCase
         $this->assertDatabaseEmpty('brands');
     }
 
+    public function test_moderator_can_create_a_product_with_specifications(): void
+    {
+        $token = $this->tokenFor(User::factory()->create([
+            'role' => UserRole::MODERATOR,
+        ]));
+        $brand = $this->createBrand();
+
+        $this->withToken($token)
+            ->postJson('/api/admin/products', [
+                'brand_id' => $brand->id,
+                'name' => 'Argamassa ACIII',
+                'description' => 'Argamassa para areas externas.',
+                'specifications' => [
+                    'Aplicacao' => 'Porcelanato',
+                    'Ambiente' => 'Interno e externo',
+                ],
+            ])
+            ->assertCreated()
+            ->assertJsonPath('data.slug', 'argamassa-aciii')
+            ->assertJsonPath('data.specifications.Aplicacao', 'Porcelanato');
+
+        $this->assertDatabaseHas('products', [
+            'name' => 'Argamassa ACIII',
+            'brand_id' => $brand->id,
+        ]);
+    }
+
     public function test_admin_can_create_and_update_a_brand_logo_using_multipart(): void
     {
         $token = $this->adminToken();

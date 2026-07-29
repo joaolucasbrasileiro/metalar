@@ -39,6 +39,7 @@ class OfferCatalogTest extends TestCase
                 'product_id' => $product->id,
                 'sku' => ' cim-vot-50 ',
                 'barcode' => '789000000001',
+                'variant_name' => 'Saco 50kg',
                 'unit' => 'SACO',
                 'weight' => 50,
                 'transfer_batch_quantity' => 5,
@@ -46,6 +47,7 @@ class OfferCatalogTest extends TestCase
             ])
             ->assertCreated()
             ->assertJsonPath('data.sku', 'CIM-VOT-50')
+            ->assertJsonPath('data.variant_name', 'Saco 50kg')
             ->assertJsonPath('data.unit', 'saco')
             ->assertJsonPath('data.transfer.minimum_fee', '7.00');
 

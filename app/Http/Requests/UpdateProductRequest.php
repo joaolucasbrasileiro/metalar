@@ -35,6 +35,8 @@ class UpdateProductRequest extends FormRequest
             'subcategory_ids.*' => ['integer', 'distinct', 'exists:subcategories,id'],
             'name' => ['sometimes', 'required', 'string', 'min:2', 'max:255'],
             'description' => ['sometimes', 'nullable', 'string', 'max:10000'],
+            'specifications' => ['sometimes', 'nullable', 'array'],
+            'specifications.*' => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

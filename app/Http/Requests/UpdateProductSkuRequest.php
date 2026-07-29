@@ -43,6 +43,7 @@ class UpdateProductSkuRequest extends FormRequest
                 'max:100',
                 Rule::unique('product_skus', 'barcode')->ignore($productSku),
             ],
+            'variant_name' => ['sometimes', 'nullable', 'string', 'max:255'],
             'unit' => ['sometimes', 'required', 'string', 'max:20'],
             'weight' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'length' => ['sometimes', 'nullable', 'numeric', 'min:0'],

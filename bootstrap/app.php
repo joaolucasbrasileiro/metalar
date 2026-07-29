@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserCanManageCatalog;
 use App\Http\Middleware\EnsureUserCanManageShop;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Foundation\Application;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
+            'catalog.manager' => EnsureUserCanManageCatalog::class,
             'shop.staff' => EnsureUserCanManageShop::class,
         ]);
     })

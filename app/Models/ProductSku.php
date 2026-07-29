@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'product_id',
     'sku',
     'barcode',
+    'variant_name',
     'unit',
     'weight',
     'length',

@@ -111,7 +111,7 @@ Route::apiResource('product-skus', ProductSkuController::class)
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth:api', 'admin'])
+    ->middleware(['auth:api', 'catalog.manager'])
     ->group(function () {
         Route::apiResource('brands', BrandController::class)->only(['store', 'update', 'destroy']);
         Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
@@ -124,6 +124,12 @@ Route::prefix('admin')
             ->name('product-images.store');
         Route::delete('/product-images/{productImage}', [ProductImageController::class, 'destroy'])
             ->name('product-images.destroy');
+    });
+
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth:api', 'admin'])
+    ->group(function () {
         Route::post('/shops/{shop}/users/{user}', [ShopUserController::class, 'store'])
             ->name('shops.users.store');
         Route::delete('/shops/{shop}/users/{user}', [ShopUserController::class, 'destroy'])
