@@ -19,7 +19,7 @@ class IndexProductRequest extends FormRequest
             'brand' => ['nullable', 'string', 'exists:brands,slug'],
             'search' => ['nullable', 'string', 'max:255'],
             'in_stock' => ['nullable', 'boolean'],
-            'sort' => ['nullable', 'in:best_offer,name'],
+            'sort' => ['nullable', 'in:best_offer,name,latest'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:24'],
         ];
     }

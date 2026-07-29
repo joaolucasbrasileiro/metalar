@@ -32,7 +32,7 @@ class PublicCatalogDocumentation
     #[OA\Parameter(name: 'brand', in: 'query', required: false, schema: new OA\Schema(type: 'string'), example: 'votorantim')]
     #[OA\Parameter(name: 'search', in: 'query', required: false, schema: new OA\Schema(type: 'string'), example: 'cimento')]
     #[OA\Parameter(name: 'in_stock', in: 'query', required: false, schema: new OA\Schema(type: 'boolean'), example: true)]
-    #[OA\Parameter(name: 'sort', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['best_offer', 'name']), example: 'best_offer')]
+    #[OA\Parameter(name: 'sort', in: 'query', required: false, schema: new OA\Schema(type: 'string', enum: ['best_offer', 'name', 'latest']), example: 'latest')]
     #[OA\Response(response: 200, description: 'Produtos paginados.', content: new OA\JsonContent(ref: '#/components/schemas/ProductsPaginatedResponse'))]
     #[OA\Response(response: 422, description: 'Filtros invalidos.', content: new OA\JsonContent(ref: '#/components/schemas/ValidationError'))]
     public function productsIndex(): void {}

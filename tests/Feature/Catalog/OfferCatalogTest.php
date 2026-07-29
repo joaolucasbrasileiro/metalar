@@ -392,6 +392,20 @@ class OfferCatalogTest extends TestCase
         $this->assertSame('15.000', $cementData['skus'][0]['total_available']);
     }
 
+    public function test_catalog_can_return_latest_products_first(): void
+    {
+        $oldProduct = $this->createProduct('Produto antigo', 'produto-antigo');
+        $newProduct = $this->createProduct('Produto novo', 'produto-novo');
+
+        $oldProduct->forceFill(['created_at' => now()->subDay()])->save();
+        $newProduct->forceFill(['created_at' => now()])->save();
+
+        $this->getJson('/api/products?sort=latest')
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $newProduct->id)
+            ->assertJsonPath('data.1.id', $oldProduct->id);
+    }
+
     public function test_catalog_does_not_expose_available_offer_for_sku_without_stock(): void
     {
         $shop = $this->createShop('matriz');

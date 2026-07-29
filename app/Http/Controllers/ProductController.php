@@ -159,7 +159,9 @@ class ProductController extends Controller
                 ),
             );
 
-        if (($filters['sort'] ?? 'best_offer') === 'name') {
+        if (($filters['sort'] ?? 'best_offer') === 'latest') {
+            $query->latest('created_at')->latest('id');
+        } elseif (($filters['sort'] ?? 'best_offer') === 'name') {
             $query->orderBy('name');
         } else {
             $query->orderByRaw('best_offer_price IS NULL')
